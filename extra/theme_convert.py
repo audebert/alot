@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
  THEME CONVERTER
  this script converts your custom alot theme files from the v.3.1 syntax

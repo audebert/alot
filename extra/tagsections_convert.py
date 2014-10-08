@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
  CONFIG CONVERTER
  this script converts your custom tag string section from the v.3.1 syntax

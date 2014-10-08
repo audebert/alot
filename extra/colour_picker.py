@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # COLOUR PICKER.
 # This is a lightly modified version of urwids palette_test.py example script as
