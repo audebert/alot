@@ -530,6 +530,14 @@ class ChangeDisplaymodeCommand(Command):
             # collapse/expand depending on new 'visible' value
             if visible is False:
                 mt.collapse(mt.root)
+
+                # mark as read if needed
+                if settings.get('auto_remove_unread'):
+                    msg = mt.get_message()
+                    if 'unread' in msg.get_tags():
+                        msg.remove_tags(['unread'])
+                        fcmd = FlushCommand(silent=True)
+                        ui.apply_command(fcmd)
             elif visible is True:  # could be None
                 mt.expand(mt.root)
             tbuffer.focus_selected_message()
