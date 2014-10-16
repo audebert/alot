@@ -36,6 +36,12 @@ class OpenThreadCommand(Command):
             logging.info('open thread view for %s' % self.thread)
 
             sb = buffers.ThreadBuffer(ui, self.thread)
+
+            # if there are unread messages, unfold them, else unfold all messages
+            if any('unread' in mt.get_message().get_tags()
+                   for mt in sb.messagetrees()):
+                query += " AND tag:unread"
+
             ui.buffer_open(sb)
             sb.unfold_matching(query)
 
