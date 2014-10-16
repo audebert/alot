@@ -71,13 +71,13 @@ def determine_sender(mail, action='reply'):
     logging.debug('candidate addresses: %s' % candidate_addresses)
     # pick the most important account that has an address in candidates
     # and use that accounts realname and the address found here
+    my_accounts_seen = []
+    # import remote_pdb; remote_pdb.set_trace(port=1234)
     for account in my_accounts:
         acc_addresses = account.get_addresses()
         for alias in acc_addresses:
-            if realname is not None:
-                break
             regex = re.compile(re.escape(alias), flags=re.IGNORECASE)
-            for seen_name, seen_address in candidate_addresses:
+            for idx, (seen_name, seen_address) in enumerate(candidate_addresses):
                 if regex.match(seen_address):
                     logging.debug("match!: '%s' '%s'" % (seen_address, alias))
                     if settings.get(action + '_force_realname'):
@@ -88,6 +88,10 @@ def determine_sender(mail, action='reply'):
                         address = account.address
                     else:
                         address = seen_address
+                    my_accounts_seen.append((idx, realname, address))
+
+    # pick the account that have been seen used by the most important header
+    _, realname, address = sorted(my_accounts_seen)[0]
 
     # revert to default account if nothing found
     if realname is None:
