@@ -14,11 +14,13 @@ import mailcap
 from cStringIO import StringIO
 
 from alot.commands import Command, registerCommand
+from alot.commands.globals import BufferCloseCommand
 from alot.commands.globals import ExternalCommand
 from alot.commands.globals import FlushCommand
 from alot.commands.globals import ComposeCommand
 from alot.commands.globals import MoveCommand
 from alot.commands.globals import CommandCanceled
+from alot.commands.globals import RefreshCommand
 from alot.commands.envelope import SendCommand
 from alot import completion
 from alot.db.utils import decode_header
@@ -974,6 +976,7 @@ class ThreadSelectCommand(Command):
     """select focussed element. The fired action depends on the focus:
         - if message summary, this toggles visibility of the message,
         - if attachment line, this opens the attachment"""
+
     def apply(self, ui):
         focus = ui.get_deep_focus()
         if isinstance(focus, AttachmentWidget):
@@ -981,6 +984,18 @@ class ThreadSelectCommand(Command):
             ui.apply_command(OpenAttachmentCommand(focus.get_attachment()))
         else:
             ui.apply_command(ChangeDisplaymodeCommand(visible='toggle'))
+
+@registerCommand(MODE, 'markasread', help='mark thread as read and close buffer')
+class MarkAsRead(Command):
+    """Mark thread a read."""
+
+    def apply(self, ui):
+        thread = ui.current_buffer.get_selected_thread()
+        thread.remove_tags(['unread'])
+
+        ui.apply_command(FlushCommand())
+        ui.apply_command(BufferCloseCommand())
+        ui.apply_command(RefreshCommand())
 
 
 @registerCommand(MODE, 'tag', forced={'action': 'add'}, arguments=[
