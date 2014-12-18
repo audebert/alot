@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Copyright (C) 2013  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 
@@ -11,6 +11,9 @@ from decoration import ArrowTree, CollapsibleArrowTree  # decoration
 import urwid
 import logging
 
+def unhandled_input(k):
+    #exit on q
+    if k in ['q', 'Q']: raise urwid.ExitMainLoop()
 
 if __name__ == "__main__":
     #logging.basicConfig(filename='example.log',level=logging.DEBUG)
@@ -79,4 +82,7 @@ if __name__ == "__main__":
     # put it into a treebox and run
     treebox = TreeBox(outertree)
     rootwidget = urwid.AttrMap(treebox, 'body')
-    urwid.MainLoop(rootwidget, palette).run()  # go
+    #add a text footer
+    footer = urwid.AttrMap(urwid.Text('Q to quit'), 'focus')
+    #enclose all in a frame
+    urwid.MainLoop(urwid.Frame(rootwidget, footer=footer), palette, unhandled_input = unhandled_input).run() # go
